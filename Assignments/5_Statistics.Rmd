@@ -1,0 +1,92 @@
+---
+title: "Statistics"
+output: html_notebook
+---
+
+The vast bulk of statistics in data journalism are very simple: counts, measures of central tendency like mean and median, measures of change. But every now and then, a story comes along that demands a little more. 
+
+This course is not a replacement for a course in statistics. Statistics is a tricky subject, where the right measurement must meet the right data to come up with a correct result. And those results require a bit of interpretation. To dip your toes in a bit, let's walk through a common example in journalism: Does crime go up when it's hot?
+
+To do this, we're going to use everything we've learned so far. We need two datasets -- crime and temperatures. We'll need to count up all the crimes on a date, then we'll need to join that data to the temperature data. In the end, we want a dataset with the date, the high temperature that day and the count of police incidents that day. 
+
+You've done each of these steps. Now it's time to put them together. 
+
+First, we load the libraries we're going to need. We'll need `dplyr` and, because we're working with dates, `lubridate`.
+```{r}
+library(dplyr)
+library(lubridate)
+```
+First we'll do [the temperature data](https://www.dropbox.com/s/n1k5kzlp88zywxv/temps.csv?dl=0) because it's simple. It comes from the [National Oceanographic and Atmospheric Administration's Climate Data Online](https://www.ncdc.noaa.gov/cdo-web/). For this exercise, I downloaded the daily high temperature for the Lincoln Airport, which is the official high and low temperature for the city. 
+
+The data, which has a field called DATE, will not import that date cleanly. Fortunately, we can use `lubridate` to clean that up. 
+```{r}
+temps <- read.csv("../Data/temps.csv")
+newtemps <- temps %>% mutate(CleanDATE = ymd(DATE))
+head(newtemps)
+nrow(newtemps)
+```
+Now we'll do the crime data. Same story, different problem with it. The date information won't import cleanly, but it's in a format we've dealt with before. So we have to use `as.POSIXct` to part it and `as.Date` to make it a date. And because it's got a lot of extra information (like minutes and seconds), we'll need to reformat it to just the day, month and year. After that, it's a simple group and count. 
+
+```{r}
+incidents <- read.csv("../Data/incidents2017.csv")
+newincidents <- incidents %>% mutate(CleanDATE = as.Date(format(as.POSIXct(DATE, format="%Y-%m-%dT%H:%M:%OSZ"), "%Y-%m-%d")))
+head(newincidents)
+```
+```{r}
+groupedIncidents <- newincidents %>% 
+  group_by(CleanDATE) %>% 
+  summarise(
+    total = n()
+  )
+head(groupedIncidents)
+```
+Now that we have what we need, we simply join the two together. 
+```{r}
+incidenttemps <- newtemps %>% inner_join(groupedIncidents, by="CleanDATE")
+head(incidenttemps)
+```
+When talking about how much two numbers are related, one of the first things we can do -- something I find most helpful -- is to visualize it. We're going to talk much more about charts in the next two lessons, but scatterplots are part and parcel of correlations, so we'll dip our toes in. 
+
+We're going to use a new library called `ggplot2`. The code below imports the library, then creates a ggplot object, passes in the dataset and sets the aesthetics (or `aes`). The aesthetics, in this case, are the basic structure of the visualization. Which data you want on the X axis, and which data you want on the Y axis. We then give it a geometry -- a `geom` -- that will give it a shape. The last bit adds in a linear model, or a line representing what we'd expect given our data. 
+```{r}
+library(ggplot2)
+
+ggplot(incidenttemps, aes(x=TMAX, y=total)) + geom_point() + geom_smooth(method=lm, se=FALSE)
+```
+Right away, we can see from the chart that the line goes up to the right. If you look at the axes, you'll see that the vertical axis is the count of incidents. The horizontal axis is the temperature. So if the line is going up to the right, it means that the hotter it gets, the more incidents there are. 
+
+But how related is temerature and incidents? We can see there are days when it's not that warm that have a large number of incidents. We can also see hot days with low numbers of incidents. So it's clear that just because it's hot doesn't mean there's going to be a lot of crime incidents. 
+
+To do that, we're going to use something called the Pearson product-moment correlation. It's widely used in statistics and the sciences, and it measure the linear correlation between two numbers. Which is exactly what we have here. 
+
+In R, you do that with `cor.test` and you tell it which two fields you want to correlate together. in our case, we want to do `TMAX` and `total`, but unlike other functions, we have to tell it which data frame it comes from. You do that as follows:
+```{r}
+cor.test(incidenttemps$TMAX, incidenttemps$total)
+```
+The first thing I look at here is the p-value. The p-value tells us, to oversimplify a bit, if our end result is really the result of random noise. In the sciences, a p-value of .05 is considered the threshold for validity. Our number is .000000000000000022 or 2.2 to the -16th power. That's considerably smaller than .05, so the result we get when comparing temperature to crime isn't random chance. It's real. 
+
+But how real? 
+
+That number is at the bottom, under `cor`: 0.4878489 or more simply .49. To get the amount of change in crime that is related to temperature, we need to square that. 
+
+```{r}
+0.4878489 * 0.4878489 
+```
+
+What that number means is that about a quarter of the change in crime can be predicted by the temperature. 
+
+So does crime go up when it's hot? There is certainly a relationship, and that relationship says that yes, you can predict more crime with hotter temperatures. But statistically speaking, it's about a quarter of the explanation. Put another way -- 75 percent of the reason there's a greater or lesser number of crimes on a given day is explained by something other than temperature. 
+
+### Assignment
+
+Does the same thing hold true for students at the University of Nebraska-Lincoln? Here's a dataset of 2016 temperatures. Here's a dataset of crimes at UNL. Do students follow the same patterns as the general public? What is the relationship? Is it the same? Different?
+
+#### Rubric
+
+1. Did you import the data correctly?
+2. Did you format the dates correctly?
+3. Did you total up the crime numbers correctly?
+4. Did you join the data correctly?
+5. Did you use statistics correctly?
+6. Did you explain your results correctly?
+7. Did you explain each step using Markdown?
