@@ -1,0 +1,169 @@
+---
+title: "Other types of visualizations"
+output: html_notebook
+---
+
+#### "Our eyes can make a remarkable number of distinctions within a small area." -- Edward Tufte
+
+One of Tufte's most enduring ideas is that of Small Multiples, which he describes as frames of a movie. It's creating a series of graphics that show the same thing, but iterated over a value. 
+
+A few examples:
+
+* [As U.S. Life Expectancies Climb, People In A Few Places Are Dying Younger](https://fivethirtyeight.com/features/as-u-s-life-expectancies-climb-people-in-a-few-places-are-dying-younger/)
+* [275 California drought maps show deep drought and recovery](http://www.latimes.com/local/lanow/la-me-g-california-drought-map-htmlstory.html)
+
+Think of it like this: What if we made a chart for each of the 5 largest crimes on campus, showing a count by month for each over 5 years? 
+
+```{r}
+library(lubridate)
+library(dplyr)
+library(ggplot2)
+
+unlcrime <- read.csv("../Data/unlcrime.csv", na.string = "NA")
+
+head(unlcrime)
+```
+Let's first figure out what the top five UNLPD calls are. 
+```{r}
+crimes <- unlcrime %>% group_by(Incident.Code) %>%
+summarize(
+        count = n()
+    ) %>% 
+arrange(desc(count)) %>% 
+top_n(5)
+
+head(crimes)
+```
+Now we can filter those out to create our data.
+```{r}
+crimesbymonth <- unlcrime %>%
+filter(Incident.Code == "ALCOHOL - MINOR IN POSSESSION" | Incident.Code == "MEDICAL EMERGENCY" | Incident.Code == "TRAFFIC - SUSPENDED DRIVER" | Incident.Code == "NARCOTICS - POSSESSION" | Incident.Code == "ALCOHOL - DWI") %>%
+mutate(
+    shortdate = format(as.POSIXct(Reported, format="%Y-%m-%d")),
+    month = floor_date(ymd(shortdate), "month"),
+) %>% 
+group_by(Incident.Code, month) %>%
+summarize(
+        count = n()
+    )
+```
+The new bits we're going to learn today is the `facet_wrap` where we tell ggplot, essentially, make a new chart for each one of these things. **Note: Your facet cannot be a date. To use years or months, you'll have to create one in your data.**
+```{r}
+ggplot(crimesbymonth, aes(x=month, y=count, group=1)) +
+   geom_line() + labs(x="Month", y="Count") + facet_wrap(~Incident.Code)
+```
+## Treemaps
+
+Treemaps are somewhat controversial in data visualization circles. According to Edward Tufte's data visualization commandments, data graphics must, among other things:
+
+* Show the data
+* Induce the viewer to think about substance rather than the methodology
+* Avoid distortion
+* Make large datasets coherent
+* Encourage the eye to compare different pieces of data
+* Reveal the data at several levels of detail
+
+The question many arrive at with Treemaps are ... do they? 
+
+Let's explore. 
+
+In your R Studio console, install the treemaps package like this: 
+
+```
+install.packages('treemap', repos='http://cran.us.r-project.org')
+```
+
+For our example, we'll make a Treemap of our college enrollment data. The goal is to show which colleges are bigger than others, as well as the majors within them. 
+
+```{r}
+library(treemap)
+
+enrollment <- read.csv("../Data/collegeenrollment.csv")
+
+head(enrollment)
+```
+
+Now, this is a little much, but each line is pretty self explanatory and each line is explained afterward. 
+
+```{r}
+treemap(enrollment, 
+    index=c("College","MajorName"),  # A list grouping variables: ORDER MATTERS.
+    vSize = "Total",  # This determines the size, so it must be a number.
+    title="Majors at UNL, 2017", # Customize the title
+    fontsize.title = 24, #Change the font size of the title
+    fontsize.labels=c(15,7), # Size of labels, must equal count of index
+    fontcolor.labels=c("white","black"),     
+    fontface.labels=c(2,1), # Font of labels: 1,2,3,4 for normal, bold, italic, bold-italic...
+    bg.labels=c("transparent"), # Background color of labels
+    align.labels=list(
+        c("left", "top"), 
+        c("right", "bottom")
+        ), # Where to place labels in the rectangle?
+    overlap.labels=0.5, # number between 0 and 1 that determines the overlap between labels.
+    inflate.labels=F # If true, labels are bigger when rectangle is bigger.
+)
+```
+**Discussion: Does this accomplish Tufte's commandments?**
+
+* Show the data
+* Induce the viewer to think about substance rather than the methodology
+* Avoid distortion
+* Make large datasets coherent
+* Encourage the eye to compare different pieces of data
+* Reveal the data at several levels of detail
+
+## Waffle charts ... or never ever use pie charts 
+
+Pie charts are the devil. They are an instant F in this class. I'll give you an example of why. 
+
+What's the racial breakdown of journalism majors at UNL?
+
+Here it is in a pie chart: 
+
+```{r}
+jour <- filter(enrollment, MajorName == "Journalism")
+
+jdf <- jour %>% 
+group_by(Race) %>%
+summarize(
+       total=sum(Count)) %>%
+select(Race, total) %>% 
+filter(total != 0)
+
+ggplot(jdf, aes(x="", y=total, fill=Race)) + geom_bar(width = 1, stat = "identity") + coord_polar("y", start=0)
+```
+You can see, it's pretty white. But ... what about beyond that? How carefully can you evaluate angles and area? 
+
+Not well. 
+
+So let's introduce a better way: The Waffle Chart. Some call it a square pie chart. I personally hate that. Waffles it is. [Here's the library's github page with some instructions](https://github.com/hrbrmstr/waffle). 
+
+```
+install.packages('waffle')
+```
+
+```{r}
+library(waffle)
+```
+The downside of the waffle library -- it doesn't play well with arbitrary dataframes. The good news? You don't want to be doing too many categories, so it's easy the create vectors to handle this. 
+```{r}
+jour %>% 
+group_by(Race) %>%
+summarize(
+       total=sum(Count)) %>%
+select(Race, total) %>% 
+filter(total != 0)
+```
+So that's the data we need to create a vector for. Here's what that looks like:
+```{r}
+j <- c('Asian'=3, 'Black'=9, 'Hispanic'=10, 'NonResidentAlien'=4, 'Two or more races'=9, "Unknown"=1, "White"=194)
+```
+Now we can put into the waffle library. The element j is our data, the number of rows you can change if you want, `title` and `xlab` are straight out of ggplot. 
+```{r}
+waffle(j, rows = 10, title="Journalism majors by race", xlab="1 square = 1 student")
+```
+How does this compare with the pie chart? Is it easier to read? Does it tell a different story? 
+
+### Assignment
+
+TBD

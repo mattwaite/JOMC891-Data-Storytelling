@@ -1,0 +1,204 @@
+---
+title: "Charts I"
+output: html_notebook
+---
+
+With `ggplot2`, we dive into the world of programmatic data visualization. The `ggplot2` library implements something called the grammar of graphics. The main concepts are: 
+
+* aesthetics - which in this case means the data which we are going to plot
+* geometries - which means the shape the data is going to take
+* scales - which means any transformations we might make on the data
+* facets - which means how we might graph many elements of the same dataset in the same space
+* layers - which means how we might lay multiple geometries over top of each other to reveal new information.
+
+Hadley Wickam, who is behind all of the libaries we have used in this course to date, wrote about his layered grammar of graphics in [this 2009 paper that is worth your time to read](http://byrneslab.net/classes/biol607/readings/wickham_layered-grammar.pdf). 
+
+Here are some `ggplot2` resources you'll want to keep handy: 
+
+* [The ggplot documentation](http://ggplot2.tidyverse.org/reference/index.html).
+* [The ggplot cookbook](http://www.cookbook-r.com/Graphs/)
+
+Let's dive in using data we've already seen before -- mountain lion sightings. This workflow will represent a clear picture of what your work in this class will be like for much of the rest of the semester. One way to think of this workflow is that your Jupyter Notebook is now your digital sketchbook, where you will try different types of visualizations to find ones that work. Then, you will export your work into a program like Illustrator to finish the work. 
+
+To begin, we'll import the `ggplot2` and `dplyr` libraries. We'll read in the data, then create a new dataframe that represents our mountain lion data grouped by counties, similar to what we've done before. 
+
+```{r}
+library(ggplot2)
+library(dplyr)
+```
+```{r}
+mountainlions <- read.csv("../Data/mountainlions.csv")
+```
+The easiest thing we can do is create a simple histogram of our data. We could, for instance, create a bar chart of the number of times a county appears in the data. To do that, we simply tell `ggplot2` what our dataset is, what element of the data we want to make the histogram out of (which is the aesthetic), and the geometry type. It looks like this:
+
+`ggplot(mountainlions, aes(x=COUNTY)) + geom_bar()` 
+
+Note: mountainlions is our data, `aes` means aesthetics, `x=COUNTY` explicitly tells `ggplot2` that our x value -- our horizontal value -- is the COUNTY field from the data, and then we add on the `geom_bar()` as the geometry. And what do we get when we run that? 
+```{r}
+ggplot(mountainlions, aes(x=COUNTY)) + geom_bar()
+```
+Well. We get a chart. So that's ... something. But it's kind of a mess. There's too many values, you can't read them on the bottom, they aren't in order. It's just a mess. So often times with bar charts, it's better to do our own grouping and counting, because we can control the data more than we can through `ggplot2`. 
+```{r}
+counties <- mountainlions %>%
+  group_by(COUNTY) %>%
+  summarise(
+    count = n()
+  ) %>% arrange(desc(count))
+
+head(counties)
+```
+So what happens when we put counties in as our dataset, which did all the grouping and counting for `ggplot2` instead of having ggplot do it? 
+```{r}
+ggplot(counties, aes(x=COUNTY)) + geom_bar()
+```
+Gah. That's awful. Everything is the same now! Well, `ggplot2` default is to count each X value and use that to create the bar. So we grouped everything together, so there's only one of each county -- thus, why there's only one of everything. So we need to tell `ggplot2` that we have something else to use to make the bars. In `ggplot2`, that's called the `weight` and it goes into the aesthetics. 
+```{r}
+ggplot(counties, aes(COUNTY, weight=count)) + geom_bar()
+```
+Better, but we're back where we started. What if we limited the chart to only the counties with a large number of sightings? We can do that in `dpylr` by using `filter` at the end. Note the last step of the data prep here: 
+```{r}
+counties <- mountainlions %>%
+  group_by(COUNTY) %>%
+  summarise(
+    count = n()
+  ) %>% arrange(desc(count)) %>%
+  filter(count > 10)
+
+ggplot(counties, aes(COUNTY, weight=count)) + geom_bar()
+```
+Better still, but the bars aren't in any order that makes sense -- they're in alphabetical order by county, even though our dataset sorts them. That's because `ggplot2` ignores any ordering you do to the data ahead of time, and the ordering done in arrange doens't really stick. To get it to do that, we have two options: We can reorder it in `ggplot2` using `reorder` in the aesthetics -- `reorder(COUNTY, count)` which says reorder the order of the counties by the value of count. 
+```{r}
+ggplot(counties, aes(reorder(COUNTY, count), weight=count)) + geom_bar()
+```
+But that looks silly because the least value is first when it should be the greatest value. So we can change that pretty easily.
+```{r}
+ggplot(counties, aes(reorder(COUNTY, -count), weight=count)) + geom_bar()
+```
+Our other option is to fix the ordering in our dplyr work with an additional mutate step. We do that by adding `%>% mutate(COUNTY = factor(COUNTY, COUNTY))`. What that says in English is mutate COUNTY by reordering the factor COUNTY by what is in COUNTY, which, thanks to arrange, is in the order we want it to be in. 
+```{r}
+counties <- mountainlions %>%
+  group_by(COUNTY) %>%
+  summarise(
+    count = n()
+  ) %>% arrange(desc(count)) %>%
+  filter(count > 10) %>% mutate(COUNTY = factor(COUNTY, COUNTY))
+
+ggplot(counties, aes(COUNTY, weight=count)) + geom_bar()
+```
+One neat little trick? What if we didn't want vertical bars? We want horizontal bars? We can use `coord_flip()` to do that. 
+```{r}
+ggplot(counties, aes(COUNTY, weight=count)) + geom_bar() + coord_flip()
+```
+## Assignment
+
+Using the UNL police data you used in the first R assignment, chart the 10 largest reported crimes to UNLPD in the dataset. 
+
+#### Rubric
+1. Did you import the data correctly?
+2. Did you manipulate the data correctly?
+3. Did you chart the data?
+4. Did you explain your steps in Markdown comments?
+
+## Other Geometries 
+
+There are scores of geometries in ggplot that we can use to visualize data. Let's extend the bar chart to show parts of the whole. It's called the Stacked Bar Chart. 
+
+First let's grab some [data](https://www.dropbox.com/s/g3sx3pq616qnbvm/collegeenrollment.csv?dl=0). It's data on enrollment by major, race and gender at UNL. 
+
+```{r}
+enrollment <- read.csv("../Data/collegeenrollment.csv")
+head(enrollment)
+```
+So let's narrow our data down a bit. We'll filter our data down to the College of Journalism and Mass Communications, or as the database calls it "& Mass Comm". 
+
+We'll start by creating a new data frame, then use filter(name of source data frame, filter condition). 
+```{r}
+cojmc <- filter(enrollment, College == "College of Journalism & Mass Comm")
+```
+Now we can visualize it. Let's use a stacked bar chart. 
+```{r}
+ggplot(cojmc, aes(MajorName, weight=Count, fill=Race)) + geom_bar() + scale_color_brewer("Race")
+```
+Or how about a line chart that shows change over time.
+```{r}
+enrollment <- read.csv("../Data/enrollment.csv")
+head(enrollment)
+```
+What we have here is enrollment at UNL since 1967. And, as you can see, I've already pulled the year into a field. So plotting this on a line chart is simply a matter of changing the geometry from what we've previously done to `geom_line`. 
+```{r}
+ggplot(enrollment, aes(x=Year, y=Enrollment)) + geom_line()
+```
+But what's the problem with this? Where does the Y axis start? Does this chart tell the story of enrollments at UNL over time? 
+
+Short answer: No. It makes it look wildly erratic. It's anything but. So we need to change our Y axis scale. And to do that, we introduce `scale_y_continuous` and `scale_x_continuous` as commands that we can chain to this. 
+
+In this, we're going to create a vector -- a collection of elements -- that set our lower and upper bounds of our variable. So lets start it at 0 and end it at 30,000, which is about 4,000 higher than our max value. Why that? It gives the top a litle space. We could set it to 27,000 or 100,000. What you set it as is what you need to tell the truth about the data. So the code you are adding is `+ scale_y_continuous(limits = c(0, 30000))` and, for purposes of this example, you can do `scale_x_continuous` too, though it has no real effect: `+ scale_x_continuous(limits = c(1967, 2016))`. 
+```{r}
+ggplot(enrollment, aes(x=Year, y=Enrollment)) + geom_line() + scale_y_continuous(limits = c(0, 30000)) + scale_x_continuous(limits = c(1967, 2016)) 
+```
+Note how much flatter the line is? That's more like what enrollment looks like. Up and down, but relatively stable.
+
+## Introducing Labels
+
+Labels are important to graphics. Clear labeling of your X and Y axis and a clear title are essential to graphics and your grade. Adding them uses the labs (short for labels) element that you can chain to your graphic. You can explicitly change the x, y and title labels pretty simply.
+```{r}
+ggplot(enrollment, aes(x=Year, y=Enrollment)) + geom_line() + scale_y_continuous(limits = c(1000, 30000)) + scale_x_continuous(limits = c(1967, 2016)) + labs(x="Academic year", y="Fall enrollment", title="Enrollment at UNL since 1967", subtitle="Enrollment at UNL grew during the Vietnam War and has remained stable since.", caption="Graphic by Matt Waite") 
+```
+
+## Scatterplots
+
+Scatterplots are used to show correlation, most often between two continuous variables. They CAN be used with a mixture of categorical and continuous varibles, but it can get dicey quickly. It's better if you have two variables that aren't grouped together. 
+
+To show how scatterplots work, we're going to use some data from the [Hollywood Age Gap](https://hollywoodagegap.com/) project, which shows the age gap between the actors in movies. The project has a [github repository](https://github.com/lynnandtonic/hollywood-age-gap) and I've added the data to the course data repository. 
+
+So let's first import the data.
+```{r}
+movies <- read.csv("../Data/movies.csv")
+head(movies)
+```
+If you are sensing a pattern with ggplot, that's good because there is one. We invoke ggplot, we pass it a data frame, set up our aesthetic and then give it a geomemtry. It's the same way every time. So let's use `Actor.1.Age` and `Actor.2.Age` as our continuous variables and plot them. 
+```{r}
+ggplot(movies, aes(x=Actor.1.Age, y=Actor.2.Age)) + geom_point()
+```
+The immediate problem you can see is ... which movie is that all the way up in the top left corner? Or down along the bottom? What are these movies out here with actors in their 80s? 
+
+We have a problem of labeling.
+
+To solve this, we're going to introduce a new geometry: `geom_text` which just renders up text where the data would appear in the chart. We tell it which bit of text to render and, as you might imagine, [there's a lot of options](http://ggplot2.tidyverse.org/reference/geom_text.html). 
+```{r}
+ggplot(movies, aes(x=Actor.1.Age, y=Actor.2.Age)) + 
+geom_point() + 
+geom_text(data=movies, aes(label=Movie.Name))
+```
+Eeek. That's no good. 
+
+To fix this, we have several options, but they all boil down to createing a subset of the data that labels only the points we want to label. If you look at the head again, you can see there's a field called Age.Difference. What if we just looked at movies with greater than a 35 year age difference? 
+
+There's two ways we can accomplish this: We can create a new dataframe and populate it with a filtered set of data where the only records remaining have the required age differences in them. Then, where it says `data=` in the geom_text, we can make that our new dataframe. 
+
+Or, we can use a trick called `subset`. It looks like `subset(movies, Age.Difference>35`. We can put that directly into the `data=` bits and it will give us what we want. 
+```{r}
+ggplot(movies, aes(x=Actor.1.Age, y=Actor.2.Age)) + 
+geom_point() + 
+geom_text(data=subset(movies, Age.Difference>=30), aes(label=Movie.Name))
+```
+Getting there. We can now look into the options -- we can shrink the text, nudge it above, below or left or right of the dot and we can make sure that our labels don't overlap. Here's what that looks like: 
+```{r}
+ggplot(movies, aes(x=Actor.1.Age, y=Actor.2.Age)) + 
+geom_point() + 
+geom_text(data=subset(movies, Age.Difference>=30), aes(label=Movie.Name), size=2, nudge_y=1, check_overlap = TRUE) +
+labs(x="Actor 1 Age", y="Actor 2 Age", title="The age gap in Hollywood movie relationships")
+```
+Another thing we can add to correlation plots? A fit line -- the line that represents the relationship. That gives us some idea of the relationship between our X and our Y values. There's [a ton of options here](http://ggplot2.tidyverse.org/reference/geom_smooth.html), but the simplest is the linear model. It's a straight line. To get it, we add `geom_smooth` after our point geom.  
+```{r}
+ggplot(movies, aes(x=Actor.1.Age, y=Actor.2.Age)) + 
+geom_point() + 
+geom_smooth(method=lm, se=FALSE) + 
+geom_text(data=subset(movies, Age.Difference>35), aes(label=Movie.Name), size=2, nudge_y=1, check_overlap = TRUE) +
+labs(x="Actor 1 Age", y="Actor 2 Age", title="The age gap in Hollywood movie relationships")
+```
+What that says is there's a general linear relationship between the age of the male actor and the age of the female actor, but it's not 1 to 1. It's closer to 2 to 1. 
+
+### Assignment
+
+TBD

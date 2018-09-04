@@ -1,0 +1,34 @@
+---
+title: "More Maps"
+output: html_notebook
+---
+
+
+```{r}
+library('sf')
+library('ggplot2')
+library('dplyr')
+```
+
+
+
+```{r}
+hoods <- st_read("../Data/Maps/Neighborhood_Association_Contacts.shp")
+```
+
+
+```{r}
+incidents <- st_read("../Data/Maps/LPD_Dispatch_Records.shp")
+```
+
+```{r}
+head(incidents)
+```
+
+
+
+```{r}
+parties <- incidents %>% filter(INC_==14000 | INC_==14400)
+head(parties)
+```
+
