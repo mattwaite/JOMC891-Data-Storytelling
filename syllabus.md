@@ -31,6 +31,15 @@ __Required Materials:__
 * Online materials and class handouts, as needed.
 * A sense of humor.
 
+__Learning outcomes:__
+
+By the end of this class, you should be able to:
+
+* Use basic analysis techniques to find interesting insights in a dataset
+* Use the R statistical language to create replicable workflows for analysis
+* Use the R statistical language to create visuals of data for storytelling and insights
+* Use storytelling techniques to make your data analysis interesting, approachable and readable by general audiences.  
+
 __Grading:__  
 
 The grading will be based on the stories you produce, the work you put into them and your participation in class.
@@ -109,180 +118,220 @@ UNLESS NOTED, DEADLINE 1 WILL BE WEDNESDAY AT MIDNIGHT CENTRAL TIME, DEADLINE 2 
 
 Covered: What is data journalism? Using Excel to find stories in data.
 
-* Read: [Chapter 1 of the Data Journalism Handbook](http://datajournalismhandbook.org/1.0/en/introduction.html)
-* Read: Read Meyer Chapter 1 (on Canvas under Course Documents) and realize it was (re)written in 2002.
-* Read: Herzog Chapter 1.
-* Read: The Myth of the Machine by Michael Berens in Nerds and Words on Canvas. If you have time, read a few others (like Steve Doig) and realize that document was written in 1999.  
 * The foundations of analysis: The general questions you ask.
 * Summary statistics, central tendency, and more.
-
-[**Lecture slides**](https://github.com/mattwaite/JOUR307-Data-Journalism/blob/master/Lectures/pdf_output/3_analysis_basics.pdf)
-
-* Read: Herzog Chapter 8
-* Read: Numbers in the Newsroom, Chapters 1 and 2.
-
-
-
-* Math quiz
 * Basic Spreadsheets: rows, columns, cells, importing, sorting, filtering
 * Applied analysis basics: calculating the formula for percent change
 
-[**Lecture slides:**](https://github.com/mattwaite/JOUR307-Data-Journalism/blob/master/Lectures/pdf_output/4_spreadsheet_basics.pdf)
+Assignments:
 
-* Using tax data from the Nebraska Department of Revenue, calculate the following:
+* Read: [Chapter 1 of the Data Journalism Handbook](http://datajournalismhandbook.org/1.0/en/introduction.html)
+* Read: Read Meyer Chapter 1 (on Canvas under Files) and realize it was (re)written in 2002.
+* Read: Herzog Chapter 1.
+* Read: The Myth of the Machine by Michael Berens in Nerds and Words in Files on Canvas. If you have time, read a few others (like Steve Doig) and realize that document was written in 1999.  
+* Read: Numbers in the Newsroom, Chapters 1 and 2.
+* Using tax data from the Nebraska Department of Revenue, calculate the following in Excel or Google Sheets:
 * The change in Federal Adjusted Gross Income between 2000 and 2013 for every county in Nebraska.
 * The average the number of exemptions per return in 2000 and 2013 for every county in Nebraska.
 * The change in average Nebraska Net Taxable Income per return between 2000 and 2013 for every county in Nebraska.
 * In narrative form, explain what you did. How did you arrive at the answers you got? What steps did you have to take?
 
-* Basic Spreadsheets II - mean, median, min, max, ranking
+**Deadline 2 :**
 
-[**Lecture slides**](https://github.com/mattwaite/JOUR307-Data-Journalism/blob/master/Lectures/pdf_output/5_more_spreadsheet_basics.pdf)
-
-In the next class, be prepared to answer this question: If you had to explain how you got the answers to this and the previous assignment to an editor, how comfortable are you that you could do that? Could that editor follow your explanation and get the same answers? How confident of that are you?
+Covered: Replication, transparency and explanation
 
 * Does anyone see the problem here?
 * Reliability, replicability, transparency.
 * Changing how we approach data journalism
-
-
-**Deadline 2 :**
-
-Replication, transparency and explanation
-
-* [Install Anaconda](https://github.com/mattwaite/JOUR407-Data-Journalism/blob/master/Assignments/Installations/installing_jupyter_notebook.md).  
-* Read [Reducing barriers between programmers and non-programmers in the newsroom](http://towcenter.org/reducing-barriers-between-programmers-and-non-programmers-in-the-newsroom/)
-* Read Data Journalism in the Age of Replicability
-
-
-* Analysis notebooks and data in Python
+* Analysis notebooks and data in R
 * Explaining your steps and thinking
 * General care and maintenance
+
+Assignments:
+
+* Read [Reducing barriers between programmers and non-programmers in the newsroom](http://towcenter.org/reducing-barriers-between-programmers-and-non-programmers-in-the-newsroom/)
+* Read Data Journalism in the Age of Replicability in Files in Canvas
+* Read The Data Diary in Files in Canvas
 
 ### Week 2
 
 **Deadline 1:**
 
-R Basics.
-
+Covered: R Basics.
 
 * Basic R concepts: Libraries, variables, operators, lists, functions, libraries.
 * Working in the RStudio environment
+
+Assignments:
+
 * Read: Herzog chapters 2, 3 and 4.
 * Read: [Sun Sentinel: Speeding Cops](http://www.sun-sentinel.com/news/local/speeding-cops/)
 
-
 **Deadline 2:**
 
-Aggregates
+Covered: Aggregates
 
 * Means, medians and sorting in R
+* Working with NU salaries: Group by, counting, averages and medians by job titles.
 
-[Lecture Jupyter Notebook](https://github.com/mattwaite/JOUR407-Data-Journalism/blob/master/Assignments/IntroductionToAgate/intro.ipynb)
-* [Complete the assignment at the end of this walkthrough of Agate](https://github.com/mattwaite/JOUR407-Data-Journalism/blob/master/Assignments/FirstAgateAssignment/introducing_jupyter_and_agate.md).
-* More working in Jupyter: Group by and aggregates in Agate
-* More working with NU salaries: Group by, counting, averages and medians by job titles.
+Assignments:
+
+* Read Herzog
+* Read Numbers in the Newsroom
+* Complete assignment at the end of the Aggregates walkthrough
 
 ### Week 3
 
 **Deadline 1:**
 
-Formats and Filters
+Covered: Formats and Filters
+
+* Converting to and from different data types  
+* Converting factors to dates
+
+Assignments:
+
+* Read Herzog
+* Read Numbers in the Newsroom
+* Complete assignment at the end of the Formats and Filters walkthrough
 
 **Deadline 2:**
 
-Formulas
+Covered: Formulas
 
-* Percent change calculations.
+* Percent change in R
+* Rates in R
+
+Assignments:
+
+* Read Herzog
+* Read Numbers in the Newsroom
+* Complete percent change calculations at the end of the walkthrough
 
 ### Week 4
 
 **Deadline 1:**
 
-Joins
+Covered: Joins
 
-* Intro to joins
-* Complete the join assignment
+* Why join?
+* Types of joins
+* Common joins in data storytelling
+
+Assignments:
+
+* Complete the join assignment at the end of the walkthrough
+* Read Herzog
 
 **Deadline 2:**
 
-Statistics
+Covered: Statistics
 
-* Basic descriptive statistics
+* Regressions
 * Significance testing
-* Regression
+
+Assignments:
+
+* Basic descriptive statistics assignment at the end of the walkthrough
+* Read Numbers in the Newsroom
 
 ### Week 5
 
 **Deadline 1:**
 
-Data cleaning
+Covered: Data cleaning
 
 * Sanity checks and data smells
 * Basic sanity checks: Descriptives
 * Data smells in Agate
 
-* [Complete the data smells assignment and the end of the walkthrough](https://github.com/mattwaite/JOUR407-Data-Journalism/blob/master/Assignments/DataSmellsAssignment/DataSmellsWalkthrough.ipynb).
+Assignments:
+
 * Install [Open Refine](http://openrefine.org/).
-
-* Intro to data cleaning
-* Into to Open Refine
-
-* [Complete the data normalization walkthrough and assignment](https://github.com/mattwaite/JOUR407-Data-Journalism/blob/master/Assignments/DataNormalizationAssignment/data_normalization_walkthrough.md) and [here's a little help with it](https://github.com/mattwaite/JOUR407-Data-Journalism/blob/master/Assignments/DataNormalizationAssignment/normalizationassignment.ipynb).
-
-* Working with PDFs -- Comet Docs
-* Cleaning PDF assignment TBD.
+* Complete the data smells and data cleaning walkthrough
 
 
 **Deadline 2:**
 
-Charts I
+Covered: Charts I
 
 * The Grammar of Graphics in R
 * Bar, line and scatterplots as a reporting tool
 
+Assignments:
+
+* Read TBD
+* Do the ggplot2 walkthrough and complete the assignment at the end
+
 **Deadline 1:**
 
-Charts II
+Covered: Charts II
 
 * Waffle charts, treemaps and lattice charts
 
+Assignments:
+
+* Read TBD
+* Do the other charts walkthrough and complete the assignment at the end.
+* Develop a pitch for a story using data and the analysis techniques you have learned. It can be specific to your course of study or interests (i.e. professional journalism students should do a written story, strategic communications students should look at a white paper format, etc.) Submit your story pitch for review.
+
 **Deadline 2:**
 
-Maps I
+Covered: Maps I
 
 * Setup and environment
 * Attribute selection
 * Buffering
+* Spatial selection
+
+Assignments:
+
+* Reading TBD
+* Complete the beginning maps walkthrough and the assignment at the end.
 
 ### Week 7
 
 **Deadline 1:**
 
-Maps II
+Covered: Maps II
 
 * Spatial joins
 * Attribute joins
 * Chloropleth maps
 
+Assignments:
+
+* Reading TBD
+* Complete the advance mapping walkthrough and the assignment at the end.  
+
 **Deadline 2:**
 
-Ethics
+Covered: Ethics
 
 * Working with data on race and ethnicity
 * Public vs. In Front of a Large Audience
+
+Assignments:
+
+* Read through the ethics walkthrough and complete the assignment at the end.
+* Read [Handling Data on Race and Ethnicity](https://source.opennews.org/articles/handling-data-about-race-and-ethnicity/)
+* Read [Public Info Doesn't Always Want To Be Free](https://source.opennews.org/articles/public-info-doesnt-always-want-be-free/)
+* Read [The Ethics of Data Journalism](https://digitalcommons.unl.edu/cgi/viewcontent.cgi?article=1010&context=journalismprojects)  
 
 ### Week 8
 
 **Deadline 1:**
 
-Story I
+Covered: Writing with numbers
 
 * Writing with numbers
 * Truth and epistemic justification
 
-[Lecture slides](https://mattwaite.github.io/jour407/lectures/epistemology.html)
+Assignments:
+
+* Read [True Facts, Maybe](https://source.opennews.org/articles/true-facts-maybe/)
+* Work on stories
 
 **Deadline 2:**
 
-Story edits
+Story edits. Sign up for individual edit times via Skype/Facetime/Hangout/Zoom, etc. 
