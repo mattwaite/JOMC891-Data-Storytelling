@@ -1,0 +1,18 @@
+---
+title: "Ethics and Data"
+output: html_notebook
+---
+
+There is a difference between data being public and being in front of a large audience. 
+
+Read David Carr on [Gun Data in New York](https://www.nytimes.com/2013/01/14/business/media/guns-maps-and-disturbing-data.html)
+
+What do you think about what the Westchester paper did publishing gun ownership data?
+
+Does data being public give news organizations the right to publish it? What if it's wrong? What if we know it will change, but we have no way to track it?
+
+Read [Public Information Doesn't Always Want to Be Free](https://source.opennews.org/articles/public-info-doesnt-always-want-be-free/)
+
+### Assignment
+
+Is [Tampa Bay Mugshots](http://www.tampabay.com/mugshots/) ethical or not? 

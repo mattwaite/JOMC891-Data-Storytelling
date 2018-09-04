@@ -1,0 +1,35 @@
+---
+title: "Writing with Numbers"
+output: html_notebook
+---
+
+### The first thing you have to acknowledge is that numbers are hard to read. All else flows from that. 
+
+They are complex words that take time for the mind to chew over. And if they are quite complex, or very large, our minds don't even grasp them firmly. 
+
+What can you do? 
+
+**Using ratios instead of percents** 
+
+Ex. 6 out of 10, or 4 out of 10.
+
+Why is that wrong and right?
+
+**Unless the exact number IS the story, don’t use exact numbers.**
+
+What sounds better? Lincoln, Neb. has 258,379 people. Lincoln, Neb. has about 250,000 people.
+Do you lose anything estimating?
+
+**Use numbers to illustrate instead of just state facts.**
+
+A compared to B.
+12,000 approvals, 1 denial. 
+X is 3 times the average. 
+
+**Use radical tranparency and have a conversation with readers**
+
+Read [Roy Peter Clark on a budget story](https://www.poynter.org/news/clear-and-interesting-budget-story).
+
+[Read the budget story](https://web.archive.org/web/20080708232247/http://www.sptimes.com/2006/09/10/Pasco/Big_money_small_change.shtml)
+
+How does the approach affect how you understand the story? 
